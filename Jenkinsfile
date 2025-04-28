@@ -10,7 +10,7 @@ pipeline {
 
         stage('SonarQube Analysis') {
             steps {
-                withSonarQubeEnv('SonarQube-Server') {
+                withSonarQubeEnv('SonarQube-Local') {
                     sh """
                         sonar-scanner \
                         -Dsonar.projectKey=ci-cd-prueba \

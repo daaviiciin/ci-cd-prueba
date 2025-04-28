@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    tools {
+        sonarRunner 'SonarScanner'  // <- Aquí el nombre que diste en "Global Tool Configuration"
+    }
+
     stages {
         stage('Checkout') {
             steps {
@@ -11,19 +15,18 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv('SonarQube-Local') {
-                    withSonarScanner('SonarScanner') {
-                        sh """
-                            sonar-scanner \
-                              -Dsonar.projectKey=ci-cd-prueba \
-                              -Dsonar.sources=. \
-                              -Dsonar.host.url=http://localhost:9000 \
-                              -Dsonar.login=__TOKEN__
-                        """
-                    }
+                    sh """
+                        ${tool 'SonarScanner'}/bin/sonar-scanner \
+                          -Dsonar.projectKey=ci-cd-prueba \
+                          -Dsonar.sources=. \
+                          -Dsonar.host.url=http://localhost:9000 \
+                          -Dsonar.login=__TOKEN__
+                    """
                 }
             }
         }
     }
 }
+
 
 

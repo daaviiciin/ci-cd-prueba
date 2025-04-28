@@ -1,10 +1,6 @@
 pipeline {
     agent any
 
-    tools {
-        sonarRunner 'SonarScanner'  // <- Aquí el nombre que diste en "Global Tool Configuration"
-    }
-
     stages {
         stage('Checkout') {
             steps {
@@ -27,6 +23,7 @@ pipeline {
         }
     }
 }
+
 
 
 

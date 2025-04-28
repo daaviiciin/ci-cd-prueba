@@ -1,19 +1,26 @@
 pipeline {
     agent any
+
     stages {
-        stage('Build') {
+        stage('Checkout') {
             steps {
-                script {
-                    echo "Building the project..."
-                }
+                git 'https://github.com/daaviiciin/ci-cd-prueba.git'
             }
         }
-        stage('Test') {
+
+        stage('SonarQube Analysis') {
             steps {
-                script {
-                    echo "Running tests..."
+                withSonarQubeEnv('SonarQube-Server') {
+                    sh """
+                        sonar-scanner \
+                        -Dsonar.projectKey=ci-cd-prueba \
+                        -Dsonar.sources=. \
+                        -Dsonar.host.url=http://localhost:9000 \
+                        -Dsonar.login=__TOKEN__
+                    """
                 }
             }
         }
     }
 }
+

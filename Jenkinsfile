@@ -16,7 +16,7 @@ pipeline {
             steps {
                 script {
                     // Cambia la carpeta al lugar donde está el código Maven
-                    dir('"C:/Users/Fer Moreno/desktop/ci-cd-setup/ci-cd-prueba/Gestor_Incidencias"') {
+                    dir('"C:/Users/Fer Moreno/desktop/ci-cd-setup/ci-cd-prueba/Gestor_Incidencias/Back-End"') {
                         // Ejecuta Maven desde la carpeta donde se encuentra el código
                         sh 'mvn clean install'
                     }
@@ -29,7 +29,7 @@ pipeline {
                 script {
                     // Asegúrate de tener el token de SonarQube en las credenciales de Jenkins
                     withSonarQubeEnv('SonarQube') {
-                        dir('"C:/Users/Fer Moreno/desktop/ci-cd-setup/ci-cd-prueba/Gestor_Incidencias"') {
+                        dir('"C:/Users/Fer Moreno/desktop/ci-cd-setup/ci-cd-prueba/Gestor_Incidencias/Back-End"') {
                             sh 'mvn sonar:sonar'
                         }
                     }

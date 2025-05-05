@@ -2,45 +2,61 @@ pipeline {
     agent any
 
     tools {
-        // Cambia 'Maven' por el nombre exacto de la instalación que quieres usar
-        maven 'Maven 3.9.9'  // Usa 'Maven' si esa es la instalación que quieres utilizar
+        // Usa el nombre exacto de la instalación de Maven configurada en Jenkins
+        maven 'Maven'  // Si tu instalación se llama 'Maven', utiliza 'Maven'
     }
 
     environment {
-        SONAR_TOKEN = credentials('sonarqube')
-        SONARQUBE_PROJECT_KEY = 'Gestor_Incidencias'
-        SONARQUBE_PROJECT_NAME = 'Gestor Incidencias'
-        SONARQUBE_URL = 'http://sonarqube:9000'  // Cambia la URL si es necesario
+        SONAR_TOKEN = credentials('sonarqube') // Si estás usando SonarQube para análisis
     }
 
     stages {
-        stage('SCM') {
+        stage('Checkout') {
             steps {
-                checkout scm  // Realiza el checkout del código fuente desde el repositorio
+                // Realiza el checkout del código desde GitHub
+                checkout scm
+            }
+        }
+
+        stage('Verify Maven Installation') {
+            steps {
+                script {
+                    // Verifica que Maven está instalado correctamente
+                    echo "Verificando instalación de Maven..."
+                    def mvnPath = tool name: 'Maven', type: 'ToolType'
+                    echo "Maven está instalado en: ${mvnPath}"
+                    
+                    // Verifica que el comando mvn esté disponible
+                    sh "${mvnPath}/bin/mvn -version"
+                }
+            }
+        }
+
+        stage('Build with Maven') {
+            steps {
+                script {
+                    // Ejecuta el build de Maven solo si Maven está instalado correctamente
+                    echo "Ejecutando build con Maven..."
+                    sh 'mvn clean install'
+                }
             }
         }
 
         stage('SonarQube Analysis') {
             steps {
                 script {
-
-                    // Ejecutar el análisis de SonarQube
+                    // Ejecuta el análisis de SonarQube
                     withSonarQubeEnv('SonarQube-Local') {
-                        sh """
-                            ${mvn}/bin/mvn clean verify sonar:sonar \
-                            -Dsonar.projectKey=${SONARQUBE_PROJECT_KEY} \
-                            -Dsonar.projectName=${SONARQUBE_PROJECT_NAME} \
-                            -Dsonar.host.url=${SONARQUBE_URL} \
-                            -Dsonar.login=${SONAR_TOKEN}
-                        """
+                        sh 'mvn sonar:sonar -Dsonar.projectKey=${SONARQUBE_PROJECT_KEY} -Dsonar.projectName=${SONARQUBE_PROJECT_NAME} -Dsonar.host.url=${SONARQUBE_URL}'
                     }
                 }
             }
         }
 
+        // Etapa opcional de limpieza de espacio de trabajo
         stage('Post Actions') {
             steps {
-                cleanWs()  // Limpia el espacio de trabajo
+                cleanWs()  // Limpia el espacio de trabajo de Jenkins
             }
         }
     }
@@ -54,6 +70,7 @@ pipeline {
         }
     }
 }
+
 
 
 

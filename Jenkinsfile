@@ -2,28 +2,27 @@ pipeline {
     agent any
 
     environment {
-        SCANNER_HOME = tool name: 'SonarScanner', type: 'hudson.plugins.sonar.SonarRunnerInstallation'
+        SONAR_TOKEN = 'sonarqube1'  // Definición local del token de SonarQube
     }
 
     stages {
         stage('Checkout') {
             steps {
-                git credentialsId: 'davicin', url: 'https://github.com/daaviiciin/ci-cd-prueba.git'
+                checkout scm
+            }
+        }
+
+        stage('Build with Maven') {
+            steps {
+                sh 'mvn clean install'
             }
         }
 
         stage('SonarQube Analysis') {
             steps {
-                withCredentials([string(credentialsId: 'sonarqube1', variable: 'SONAR_TOKEN')]) {
-                    withSonarQubeEnv('SonarQube-Local') {
-                        sh '''
-                            ${SCANNER_HOME}/bin/sonar-scanner \
-                            -Dsonar.projectKey=ci-cd-prueba \
-                            -Dsonar.sources=. \
-                            -Dsonar.host.url=http://sonarqube:9000 \
-                            -Dsonar.login=${SONAR_TOKEN}
-                            -Dsonar.exclusions=**/*.java
-                        '''
+                script {
+                    withSonarQubeEnv('SonarQube-Local') {  // Asegúrate de que 'SonarQube-Local' sea el nombre de tu configuración de SonarQube
+                        sh 'mvn sonar:sonar -Dsonar.login=$SONAR_TOKEN'
                     }
                 }
             }
@@ -31,11 +30,16 @@ pipeline {
     }
 
     post {
+        success {
+            echo '¡Análisis de SonarQube completado con éxito!'
+        }
+
         failure {
-            echo "El análisis ha fallado. Revisa los logs."
+            echo '¡El análisis de SonarQube falló! Revisa los logs para más detalles.'
         }
     }
 }
+
 
 
 

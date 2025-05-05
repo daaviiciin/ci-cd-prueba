@@ -3,7 +3,7 @@ pipeline {
 
     tools {
         // Cambia 'Maven' por el nombre exacto de la instalación que quieres usar
-        maven 'Maven'  // Usa 'Maven' si esa es la instalación que quieres utilizar
+        maven 'Maven 3.9.9'  // Usa 'Maven' si esa es la instalación que quieres utilizar
     }
 
     environment {
@@ -23,9 +23,6 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 script {
-                    // Usamos la herramienta Maven correctamente
-                    def mvn = tool name: 'Maven', type: 'ToolType'  // Usa el nombre correcto aquí
-                    echo "Usando Maven desde: ${mvn}"
 
                     // Ejecutar el análisis de SonarQube
                     withSonarQubeEnv('SonarQube-Local') {

@@ -1,18 +1,14 @@
 pipeline {
     agent any
 
-    tools {
-        sonarScanner 'SonarScanner' // Usa el nombre definido en Jenkins > Global Tool Configuration
-    }
-
     environment {
-        SCANNER_HOME = tool 'SonarScanner'
+        SCANNER_HOME = tool name: 'SonarScanner', type: 'hudson.plugins.sonar.SonarRunnerInstallation'
     }
 
     stages {
         stage('Checkout') {
             steps {
-                git credentialsId: 'github-credentials-id', url: 'https://github.com/daaviiciin/ci-cd-prueba.git'
+                git credentialsId: 'davicin', url: 'https://github.com/daaviiciin/ci-cd-prueba.git'
             }
         }
 
@@ -39,6 +35,7 @@ pipeline {
         }
     }
 }
+
 
 
 

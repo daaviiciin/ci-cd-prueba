@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        SONAR_TOKEN = credentials('SONAR_AUTH_TOKEN')
+        SONAR_TOKEN = credentials('sonarqube1')
     }
     
     tools {

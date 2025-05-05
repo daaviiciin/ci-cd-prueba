@@ -1,30 +1,33 @@
 pipeline {
     agent any
 
+    tools {
+        sonarScanner 'SonarScanner' // Usa el nombre definido en Jenkins > Global Tool Configuration
+    }
+
     environment {
-        
-        SONARQUBE_SERVER = 'SonarQube-Local'
-        
         SCANNER_HOME = tool 'SonarScanner'
     }
 
     stages {
         stage('Checkout') {
             steps {
-                git credentialsId: 'github-credentials-id', url: 'https://github.com/daaviiciin/ci-cd-prueba.git', branch: 'master'
+                git credentialsId: 'github-credentials-id', url: 'https://github.com/daaviiciin/ci-cd-prueba.git'
             }
         }
 
         stage('SonarQube Analysis') {
             steps {
-                withSonarQubeEnv("${SONARQUBE_SERVER}") {
-                    sh """
-                        sonar-scanner \
-                        -Dsonar.projectKey=ci-cd-prueba \
-                        -Dsonar.sources=. \
-                        -Dsonar.host.url=http://localhost:9000 \
-                        -Dsonar.login=${SONAR_TOKEN}
-                    """
+                withCredentials([string(credentialsId: 'sonarqube-token', variable: 'SONAR_TOKEN')]) {
+                    withSonarQubeEnv('SonarQube-Local') {
+                        sh '''
+                            ${SCANNER_HOME}/bin/sonar-scanner \
+                            -Dsonar.projectKey=ci-cd-prueba \
+                            -Dsonar.sources=. \
+                            -Dsonar.host.url=http://localhost:9000 \
+                            -Dsonar.login=${SONAR_TOKEN}
+                        '''
+                    }
                 }
             }
         }
@@ -34,11 +37,9 @@ pipeline {
         failure {
             echo "El análisis ha fallado. Revisa los logs."
         }
-        success {
-            echo "Análisis completado exitosamente."
-        }
     }
 }
+
 
 
 

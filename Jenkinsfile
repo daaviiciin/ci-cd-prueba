@@ -2,12 +2,11 @@ pipeline {
     agent any
 
     tools {
-        // Usamos el nombre de la herramienta que está configurada en Jenkins
-        maven 'maven3'  // Cambié 'Maven' por 'maven3' aquí
+        // Usamos el nombre correcto configurado en Jenkins
+        maven 'Maven3'  // Cambié 'maven3' por 'Maven3'
     }
 
     environment {
-        // Define cualquier variable de entorno
         SONAR_TOKEN = credentials('sonarqube')
         SONARQUBE_PROJECT_KEY = 'Gestor_Incidencias'
         SONARQUBE_PROJECT_NAME = 'Gestor Incidencias'
@@ -24,8 +23,8 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 script {
-                    // Usamos la herramienta de Maven
-                    def mvn = tool name: 'maven3', type: 'ToolType'  // Usamos 'maven3' aquí también
+                    // Usamos la herramienta Maven correctamente
+                    def mvn = tool name: 'Maven3', type: 'ToolType'  // Cambié 'maven3' por 'Maven3' aquí también
                     echo "Usando Maven desde: ${mvn}"
 
                     // Ejecutar el análisis de SonarQube
@@ -58,6 +57,7 @@ pipeline {
         }
     }
 }
+
 
 
 

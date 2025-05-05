@@ -3,7 +3,7 @@ pipeline {
 
     tools {
         // Asegúrate de que el nombre de la herramienta Maven coincida con el configurado en Jenkins
-        maven 'Maven'
+        maven 'Maven3'
     }
 
     environment {

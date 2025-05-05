@@ -21,8 +21,7 @@ pipeline {
             steps {
                 echo 'Compilando proyecto backend...'
                 // dir('Back-End') {
-                //     sh 'chmod +x ./mvnw || true'
-                //     sh './mvnw clean install || mvn clean install'
+                //     sh 'mvn clean install'
                 // }
             }
         }
@@ -31,7 +30,7 @@ pipeline {
             steps {
                 echo 'Ejecutando tests backend...'
                 // dir('Back-End') {
-                //     sh './mvnw test || mvn test'
+                //     sh 'mvn test'
                 // }
             }
         }
@@ -40,7 +39,7 @@ pipeline {
             steps {
                 echo 'Empaquetando backend...'
                 // dir('Back-End') {
-                //     sh './mvnw package -DskipTests || mvn package -DskipTests'
+                //     sh 'mvn package -DskipTests'
                 // }
             }
         }
@@ -49,30 +48,29 @@ pipeline {
             steps {
                 dir('Gestor_Incidencias/Back-End') {
                     withSonarQubeEnv('SonarQube-Local') {
-                        sh 'chmod +x ./mvnw' 
-                        sh "./mvnw clean verify sonar:sonar -Dsonar.login=$SONAR_TOKEN || mvn clean verify sonar:sonar -Dsonar.login=$SONAR_TOKEN"
+                        sh "mvn clean verify sonar:sonar -Dsonar.login=$SONAR_TOKEN"
                     }
                 }
             }
         }
-        stage('Test Nexus Connection') {
-        steps {
-        sh 'curl -v -u admin:admin http://nexus:8081/repository/maven-snapshots/'
-        }
-}
 
-       stage('Publicar en Nexus') {
-    steps {
-        echo 'Publicando artefactos en Nexus...'
-        dir('Back-End') {
-            // Usar credenciales directamente en la URL
-            sh '''
-                mvn deploy -DskipTests \
-                -DaltDeploymentRepository=nexus::default::http://admin:admin@nexus:8081/repository/maven-snapshots/
-            '''
+        stage('Test Nexus Connection') {
+            steps {
+                sh 'curl -v -u admin:admin http://nexus:8081/repository/maven-snapshots/'
+            }
         }
-    }
-}
+
+        stage('Publicar en Nexus') {
+            steps {
+                echo 'Publicando artefactos en Nexus...'
+                dir('Back-End') {
+                    sh '''
+                        mvn deploy -DskipTests \
+                        -DaltDeploymentRepository=nexus::default::http://admin:admin@nexus:8081/repository/maven-snapshots/
+                    '''
+                }
+            }
+        }
 
         stage('Quality Gate') {
             steps {
@@ -86,7 +84,6 @@ pipeline {
             steps {
                 echo 'Compilando proyecto frontend...'
                 dir('Front-End') {
-                    // Para proyectos Node.js/React/Angular
                     sh '''
                         if [ -f "package.json" ]; then
                             npm install
@@ -105,16 +102,11 @@ pipeline {
             }
             steps {
                 echo 'Desplegando en ambiente de desarrollo...'
-                // Desplegando backend
                 dir('Back-End') {
                     echo 'Desplegando backend en desarrollo...'
-                    // Comandos específicos para desplegar el backend
                 }
-                
-                // Desplegando frontend
                 dir('Front-End') {
                     echo 'Desplegando frontend en desarrollo...'
-                    // Comandos específicos para desplegar el frontend
                 }
             }
         }
@@ -125,16 +117,11 @@ pipeline {
             }
             steps {
                 echo 'Desplegando en producción...'
-                // Desplegando backend
                 dir('Back-End') {
                     echo 'Desplegando backend en producción...'
-                    // Comandos específicos para desplegar el backend
                 }
-                
-                // Desplegando frontend
                 dir('Front-End') {
                     echo 'Desplegando frontend en producción...'
-                    // Comandos específicos para desplegar el frontend
                 }
             }
         }
@@ -148,12 +135,12 @@ pipeline {
             echo 'El pipeline ha fallado!'
         }
         always {
-            // Limpieza opcional de recursos
             echo 'Limpiando workspace...'
             cleanWs()
         }
     }
 }
+
 
 
 

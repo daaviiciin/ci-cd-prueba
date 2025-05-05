@@ -10,7 +10,7 @@ pipeline {
         SONAR_TOKEN = credentials('sonarqube')
         SONARQUBE_PROJECT_KEY = 'Gestor_Incidencias'
         SONARQUBE_PROJECT_NAME = 'Gestor Incidencias'
-        SONARQUBE_URL = 'http://localhost:9000'  // Cambia la URL si es necesario
+        SONARQUBE_URL = 'http://sonarqube:9000'  // Cambia la URL si es necesario
     }
 
     stages {

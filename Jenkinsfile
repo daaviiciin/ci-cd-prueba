@@ -6,6 +6,7 @@ pipeline {
         SONARQUBE_SERVER = 'SonarQube-Local'
         // Debes reemplazar esto con el ID del token generado en SonarQube
         SONAR_TOKEN = credentials('sonarqube1')
+        SCANNER_HOME = tool 'SonarScanner'
     }
 
     stages {

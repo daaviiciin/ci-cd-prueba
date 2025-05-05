@@ -2,13 +2,16 @@ pipeline {
     agent any
 
     tools {
-        // Configura el uso de Maven, asegúrate de que esté correctamente configurado en Jenkins
+        // Asegúrate de que el nombre de la herramienta Maven coincida con el configurado en Jenkins
         maven 'Maven'
     }
 
     environment {
-        // Define aquí cualquier variable de entorno global si es necesario
+        // Define cualquier variable de entorno, como el token de SonarQube, que has configurado en Jenkins
         SONAR_TOKEN = credentials('sonarqube')
+        SONARQUBE_PROJECT_KEY = 'Gestor_Incidencias'  // Define el nombre del proyecto en SonarQube
+        SONARQUBE_PROJECT_NAME = 'Gestor Incidencias'  // El nombre que se verá en SonarQube
+        SONARQUBE_URL = 'http://localhost:9000'  // URL de tu servidor de SonarQube
     }
 
     stages {
@@ -22,7 +25,7 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 script {
-                    // Usamos la herramienta de SonarQube para la configuración del entorno
+                    // Usamos la herramienta de Maven para obtener la ruta correcta
                     def mvn = tool name: 'Maven', type: 'ToolType'
                     echo "Usando Maven desde: ${mvn}"
 
@@ -32,7 +35,8 @@ pipeline {
                             ${mvn}/bin/mvn clean verify sonar:sonar \
                             -Dsonar.projectKey=${SONARQUBE_PROJECT_KEY} \
                             -Dsonar.projectName=${SONARQUBE_PROJECT_NAME} \
-                            -Dsonar.host.url=${SONARQUBE_URL}
+                            -Dsonar.host.url=${SONARQUBE_URL} \
+                            -Dsonar.login=${SONAR_TOKEN}
                         """
                     }
                 }
@@ -42,7 +46,7 @@ pipeline {
         // Etapas opcionales de postacciones o limpieza
         stage('Post Actions') {
             steps {
-                cleanWs()  // Limpia el espacio de trabajo de Jenkins
+                cleanWs()  // Limpia el espacio de trabajo de Jenkins después de la ejecución
             }
         }
     }
@@ -57,6 +61,7 @@ pipeline {
         }
     }
 }
+
 
 
 

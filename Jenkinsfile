@@ -49,6 +49,7 @@ pipeline {
             steps {
                 dir('Gestor_Incidencias/Back-End') {
                     withSonarQubeEnv('SonarQube-Local') {
+                        sh 'chmod +x ./mvnw' 
                         sh "./mvnw clean verify sonar:sonar -Dsonar.login=$SONAR_TOKEN || mvn clean verify sonar:sonar -Dsonar.login=$SONAR_TOKEN"
                     }
                 }

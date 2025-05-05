@@ -48,7 +48,7 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 dir('Back-End') {
-                    withSonarQubeEnv('SonarQube') {
+                    withSonarQubeEnv('SonarQube-Local') {
                         sh "./mvnw clean verify sonar:sonar -Dsonar.login=$SONAR_TOKEN || mvn clean verify sonar:sonar -Dsonar.login=$SONAR_TOKEN"
                     }
                 }

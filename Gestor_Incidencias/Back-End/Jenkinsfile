@@ -2,25 +2,33 @@ pipeline {
     agent any
 
     tools {
-        maven 'Maven'  // Usa el nombre que configuraste para Maven en Jenkins
+        maven 'Maven 3'  // Usa el nombre que configuraste para Maven en Jenkins
     }
 
     environment {
-        SONAR_TOKEN = credentials('sonarqube1')  // Asegúrate de tener configurada esta credencial en Jenkins
+        SONAR_TOKEN = credentials('sonar-token')  // Asegúrate de tener configurada esta credencial en Jenkins
     }
 
     stages {
         stage('Checkout') {
             steps {
-                // Clona el repositorio desde GitHub
                 checkout scm
+            }
+        }
+
+        stage('Verify POM') {
+            steps {
+                script {
+                    // Verifica que el archivo pom.xml está en el directorio correcto
+                    sh 'ls -la'
+                }
             }
         }
 
         stage('Build with Maven') {
             steps {
-                // Ejecuta el comando de Maven para construir el proyecto
                 script {
+                    // Ejecuta el comando de Maven para construir el proyecto
                     sh 'mvn clean install'
                 }
             }
@@ -28,9 +36,9 @@ pipeline {
 
         stage('SonarQube Analysis') {
             steps {
-                // Realiza el análisis con SonarQube
                 script {
-                    withSonarQubeEnv('SonarQube-Local') {  // El nombre de la configuración de SonarQube en Jenkins
+                    // Realiza el análisis con SonarQube
+                    withSonarQubeEnv('SonarQube-Local') {
                         sh 'mvn sonar:sonar -Dsonar.login=$SONAR_TOKEN'
                     }
                 }
@@ -48,6 +56,7 @@ pipeline {
         }
     }
 }
+
 
 
 

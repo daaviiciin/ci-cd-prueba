@@ -2,10 +2,9 @@ pipeline {
     agent any
 
     environment {
-        // Nombre del servidor SonarQube configurado en Jenkins
+        
         SONARQUBE_SERVER = 'SonarQube-Local'
-        // Debes reemplazar esto con el ID del token generado en SonarQube
-        SONAR_TOKEN = credentials('sonarqube1')
+        
         SCANNER_HOME = tool 'SonarScanner'
     }
 

@@ -2,8 +2,8 @@ pipeline {
     agent any
 
     tools {
-        // Usamos el nombre correcto configurado en Jenkins
-        maven 'Maven3'  // Cambié 'maven3' por 'Maven3'
+        // Cambia 'Maven' por el nombre exacto de la instalación que quieres usar
+        maven 'Maven'  // Usa 'Maven' si esa es la instalación que quieres utilizar
     }
 
     environment {
@@ -24,7 +24,7 @@ pipeline {
             steps {
                 script {
                     // Usamos la herramienta Maven correctamente
-                    def mvn = tool name: 'Maven3', type: 'ToolType'  // Cambié 'maven3' por 'Maven3' aquí también
+                    def mvn = tool name: 'Maven', type: 'ToolType'  // Usa el nombre correcto aquí
                     echo "Usando Maven desde: ${mvn}"
 
                     // Ejecutar el análisis de SonarQube
@@ -57,6 +57,7 @@ pipeline {
         }
     }
 }
+
 
 
 
